@@ -96,4 +96,6 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 
 ## Fixes
 
+If you encounter linker cc errors on any platform, please run this:
+
 ```export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"```
