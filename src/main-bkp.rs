@@ -439,7 +439,7 @@ fn ectf_protocol(
     dbg!(&x1_x2);
     dbg!(&s_sum);
 
-    assert_eq!(&s_sum,&x1_x2,"ECTF Failed");
+    assert_eq!(&s_sum,&x1_x2,"ECTF Final Assertion Failed");
     println!("ECTF Passed");
     
     (s1.into(), s2.into())
