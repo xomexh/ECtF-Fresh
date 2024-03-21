@@ -1,0 +1,19 @@
+[package]
+name = "ectf_fresh"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "main-bkp"
+path = "src/main-bkp.rs"
+
+[dependencies]
+curv-kzen = "0.10.0"
+rand = "0.4.0"
+
+[dependencies.paillier]
+package = "kzen-paillier"
+version = "*"
+default-features = false
