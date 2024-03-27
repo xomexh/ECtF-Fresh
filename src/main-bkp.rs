@@ -10,13 +10,13 @@ use curv::arithmetic::Modulo;
 use curv::arithmetic::traits::{Converter,NumberTests};
 use curv::arithmetic::Zero;
 use curv::arithmetic::Samplable;
-use curv::elliptic::curves::{secp256_k1::Secp256k1, Point, Scalar};
+use curv::elliptic::curves::{Secp256r1, Point, Scalar};
 use rand::Rng;
 use curv::arithmetic::BasicOps;
 
-fn mta(a: &Scalar<Secp256k1>, b: &Scalar<Secp256k1>) -> (BigInt, BigInt){
+fn mta(a: &Scalar<Secp256r1>, b: &Scalar<Secp256r1>) -> (BigInt, BigInt){
     
-    let zp = Scalar::<Secp256k1>::group_order();
+    let zp = Scalar::<Secp256r1>::group_order();
     let (ek, dk) = Paillier::keypair().keys();
     //let zp = &ek.n;
     // Alice's input
@@ -70,13 +70,13 @@ fn mta(a: &Scalar<Secp256k1>, b: &Scalar<Secp256k1>) -> (BigInt, BigInt){
 }
 
 fn mta_2(
-    alice_secret: &Scalar<Secp256k1>,
+    alice_secret: &Scalar<Secp256r1>,
     r1: &BigInt,
     r2: &BigInt,
-    bob_secret: &Scalar<Secp256k1>, 
-) -> (Scalar<Secp256k1>, Scalar<Secp256k1>) {
+    bob_secret: &Scalar<Secp256r1>, 
+) -> (Scalar<Secp256r1>, Scalar<Secp256r1>) {
 
-    let zp = Scalar::<Secp256k1>::group_order();
+    let zp = Scalar::<Secp256r1>::group_order();
     
     // Generate Paillier key pair
     let (ek, dk) = Paillier::keypair().keys();
@@ -142,9 +142,9 @@ fn mta_4(
     r1: &BigInt,
     r2: &BigInt,
     bob_secret: &BigInt, 
-) -> (Scalar<Secp256k1>, Scalar<Secp256k1>) {
+) -> (Scalar<Secp256r1>, Scalar<Secp256r1>) {
 
-    let zp = Scalar::<Secp256k1>::group_order();
+    let zp = Scalar::<Secp256r1>::group_order();
     
     // Generate Paillier key pair
     let (ek, dk) = Paillier::keypair().keys();
@@ -207,12 +207,12 @@ fn mta_4(
 }
 
 fn ectf_protocol(
-    p1: &Point<Secp256k1>,
-    p2: &Point<Secp256k1>,
+    p1: &Point<Secp256r1>,
+    p2: &Point<Secp256r1>,
 ) -> (BigInt, BigInt) {
 
     let zp = BigInt::from_str_radix("115792089237316195423570985008687907853269984665640564039457584007908834671663", 10).unwrap(); //BIGGER
-    let zp_n = Scalar::<Secp256k1>::group_order(); //SMALLER
+    let zp_n = Scalar::<Secp256r1>::group_order(); //SMALLER
 
     let x1 = p1.x_coord().unwrap();
     let y1 = p1.y_coord().unwrap();
@@ -225,7 +225,7 @@ fn ectf_protocol(
     // for a -ve
     // let minus_x1 = zp_n - ( x1.clone() % zp_n);
 
-    // let minus_x1_from_scalar = Scalar::<Secp256k1>::from((-x1.clone()));
+    // let minus_x1_from_scalar = Scalar::<Secp256r1>::from((-x1.clone()));
     // dbg!(minus_x1_from_scalar.to_bigint());
     // dbg!(&minus_x1);
     // dbg!(-x1.clone());
@@ -235,7 +235,7 @@ fn ectf_protocol(
     let rho_2 = BigInt::sample_below(&zp_n);
 
 // Alice and Bob run MTA
-    let (alpha_1, alpha_2) = mta_2(&Scalar::<Secp256k1>::from((-x1.clone())), (&rho_1), (&rho_2), &Scalar::<Secp256k1>::from(x2.clone()));
+    let (alpha_1, alpha_2) = mta_2(&Scalar::<Secp256r1>::from((-x1.clone())), (&rho_1), (&rho_2), &Scalar::<Secp256r1>::from(x2.clone()));
     //let (alpha_1, alpha_2) = mta_4(&-x1.clone(), (&rho_1), (&rho_2), &x2.clone());
 
     //Check 1 Alpha1 + Alpha2 = -X1R2 + X2R1 -------------------------------------
@@ -310,7 +310,7 @@ fn ectf_protocol(
     println!("CHECK 2: Etta1 + Etta2 = (X2-X1)inverse: PASSED");
 
 // Run MTA for beta values
-    let (beta_1, beta_2) = mta_2(&Scalar::<Secp256k1>::from(-y1.clone()), &eta_1, &eta_2, &Scalar::<Secp256k1>::from(y2.clone()));
+    let (beta_1, beta_2) = mta_2(&Scalar::<Secp256r1>::from(-y1.clone()), &eta_1, &eta_2, &Scalar::<Secp256r1>::from(y2.clone()));
     //let (beta_1, beta_2) = mta_4(&-y1.clone(), &eta_1, &eta_2, &y2.clone());
     
     //dbg!(&beta_1);
@@ -387,7 +387,7 @@ fn ectf_protocol(
 
 
     // Run MTA for gamma values
-    let (gamma_1, gamma_2) = mta(&Scalar::<Secp256k1>::from(lambda_1.clone()), &Scalar::<Secp256k1>::from(lambda_2.clone()));
+    let (gamma_1, gamma_2) = mta(&Scalar::<Secp256r1>::from(lambda_1.clone()), &Scalar::<Secp256r1>::from(lambda_2.clone()));
     // dbg!(&gamma_1.clone().to_bigint());
     // dbg!(&gamma_2.clone().to_bigint());
 
@@ -446,13 +446,13 @@ fn ectf_protocol(
 }
 
 fn main() {
-    let scalar_1 = Scalar::<Secp256k1>::random();
-    let scalar_2 = Scalar::<Secp256k1>::random();
-    let g_1 = Point::<Secp256k1>::generator();
-    let g_2 = Point::<Secp256k1>::generator();
+    let scalar_1 = Scalar::<Secp256r1>::random();
+    let scalar_2 = Scalar::<Secp256r1>::random();
+    let g_1 = Point::<Secp256r1>::generator();
+    let g_2 = Point::<Secp256r1>::generator();
 
     let zp = BigInt::from_str_radix("115792089237316195423570985008687907853269984665640564039457584007908834671663", 10).unwrap(); //BIGGER
-    let zp_n = Scalar::<Secp256k1>::group_order(); //smaller
+    let zp_n = Scalar::<Secp256r1>::group_order(); //smaller
 
     //115792089237316195423570985008687907853269984665640564039457584007908834671663
     
@@ -465,10 +465,10 @@ fn main() {
 
     
     //Generate two EC points 
-    // let p1: Point<Secp256k1> = (scalar_1 * g_1);
-    // let p2: Point<Secp256k1> = (scalar_2 * g_2);
-    let p1 = Point::<Secp256k1>::generator().to_point(); // user
-    let p2 = Point::<Secp256k1>::base_point2(); // oracle
+    // let p1: Point<Secp256r1> = (scalar_1 * g_1);
+    // let p2: Point<Secp256r1> = (scalar_2 * g_2);
+    let p1 = Point::<Secp256r1>::generator().to_point(); // user
+    let p2 = Point::<Secp256r1>::base_point2(); // oracle
     // Run the ECtF protocol.
     let (s1, s2) = ectf_protocol(&p1, &p2);
     
